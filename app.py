@@ -5,11 +5,8 @@ Với ô nhập API Key (Google + OpenWeather)
 
 import streamlit as st
 import os
-from dotenv import load_dotenv
 from tools import AITools
 import json
-
-load_dotenv()
 
 # Cấu hình trang
 st.set_page_config(
@@ -192,7 +189,7 @@ with tab2:
                 st.rerun()
         with ex_cols[1]:
             if st.button("TP.HCM", key="hcm", use_container_width=True):
-                st.session_state.weather_input = "Ho Chi Minh City"
+               city = st.text_input("Nhập tên thành phố:", value="Ho Chi Minh City", key="weather_input")
                 st.rerun()
         with ex_cols[2]:
             if st.button("Đà Nẵng", key="danang", use_container_width=True):
