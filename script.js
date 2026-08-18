@@ -330,48 +330,105 @@ const Weather = {
 // ── TRANSLATOR ───────────────────────────────────────────────
 const Translator = {
   langNames: {
-    vi:'Tiếng Việt',
-    en:'Tiếng Anh', fr:'Tiếng Pháp', es:'Tiếng Tây Ban Nha',
-    de:'Tiếng Đức', ja:'Tiếng Nhật', zh:'Tiếng Trung',
-    ko:'Tiếng Hàn', hi:'Tiếng Ấn Độ', pt:'Tiếng Bồ Đào Nha'
+    vi:'Tiếng Việt', en:'Tiếng Anh', fr:'Tiếng Pháp',
+    es:'Tiếng Tây Ban Nha', de:'Tiếng Đức', ja:'Tiếng Nhật',
+    zh:'Tiếng Trung', ko:'Tiếng Hàn', hi:'Tiếng Ấn Độ', pt:'Tiếng Bồ Đào Nha'
   },
 
-  async fetch(text, targetCode) {
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=vi|${targetCode}`;
-    const res = await fetch(url);
-    if (!res.ok) throw new Error(`Lỗi mạng (${res.status})`);
+  langFlags: {
+    vi:'🇻🇳', en:'🇺🇸', fr:'🇫🇷', es:'🇪🇸',
+    de:'🇩🇪', ja:'🇯🇵', zh:'🇨🇳', ko:'🇰🇷', hi:'🇮🇳', pt:'🇧🇷'
+  },
+
+  // Thử nhiều API để đảm bảo luôn dịch được
+  async fetchMyMemory(text, fromCode, targetCode) {
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromCode}|${targetCode}&de=a@b.com`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    if (data.responseStatus !== 200) throw new Error('Dịch thất bại, thử lại sau.');
-    return data.responseData.translatedText;
+    if (data.responseStatus === 200 && data.responseData?.translatedText) {
+      const result = data.responseData.translatedText;
+      // MyMemory đôi khi trả về lỗi dạng text
+      if (result.includes('MYMEMORY WARNING') || result.includes('QUERY LENGTH')) {
+        throw new Error('Văn bản quá dài');
+      }
+      return result;
+    }
+    throw new Error(data.responseDetails || 'Dịch thất bại');
+  },
+
+  async fetchGoogleFree(text, fromCode, targetCode) {
+    // Google Translate không chính thức (miễn phí)
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${fromCode}&tl=${targetCode}&dt=t&q=${encodeURIComponent(text)}`;
+    const res = await fetch(url, { signal: AbortSignal.timeout(8000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    // Ghép các đoạn dịch lại
+    const translated = data[0]?.map(item => item[0]).filter(Boolean).join('') || '';
+    if (!translated) throw new Error('Không có kết quả');
+    return translated;
+  },
+
+  async translate(text, fromCode, targetCode) {
+    // Nếu dịch sang cùng ngôn ngữ
+    if (fromCode === targetCode) return text;
+
+    // Thử Google Free trước (chính xác hơn)
+    try {
+      return await this.fetchGoogleFree(text, fromCode, targetCode);
+    } catch (e1) {
+      // Nếu Google thất bại, thử MyMemory
+      try {
+        return await this.fetchMyMemory(text, fromCode, targetCode);
+      } catch (e2) {
+        throw new Error('Không thể dịch lúc này. Vui lòng thử lại sau.');
+      }
+    }
   },
 
   async run() {
     const text = $('translateInput').value.trim();
+    const fromCode = $('sourceLang').value;
     const targetCode = $('targetLang').value;
+    const fromName = this.langNames[fromCode] || fromCode;
     const targetName = this.langNames[targetCode] || targetCode;
+    const fromFlag = this.langFlags[fromCode] || '🌐';
+    const targetFlag = this.langFlags[targetCode] || '🌐';
 
-    if (!text) { $('translateResult').innerHTML = renderAlert('warning', 'Vui lòng nhập văn bản cần dịch'); return; }
-    if (text.length > 500) { $('translateResult').innerHTML = renderAlert('warning', 'Văn bản quá dài (tối đa 500 ký tự)'); return; }
+    if (!text) {
+      $('translateResult').innerHTML = renderAlert('warning', 'Vui lòng nhập văn bản cần dịch');
+      return;
+    }
+    if (text.length > 1000) {
+      $('translateResult').innerHTML = renderAlert('warning', 'Văn bản quá dài (tối đa 1000 ký tự)');
+      return;
+    }
 
-    $('translateResult').innerHTML = renderSkeleton(1);
+    $('translateResult').innerHTML = `
+      <div style="display:flex;align-items:center;gap:12px;padding:20px;color:var(--txt-muted);">
+        <div class="spinner" style="width:24px;height:24px;margin:0;border-width:2px;"></div>
+        <span>Đang dịch...</span>
+      </div>`;
     setLoading('translateBtn', true);
+
     try {
-      const translated = await this.fetch(text, targetCode);
+      const translated = await this.translate(text, fromCode, targetCode);
+      // Hiển thị vào preview box
+      const preview = $('translatePreview');
+      if (preview) {
+        preview.textContent = translated;
+        preview.classList.add('has-text');
+      }
       $('translateResult').innerHTML = `
         <div class="result-block">
-          <div class="translate-pair">
-            <div class="translate-box">
-              <div class="translate-box-label">🇻🇳 Tiếng Việt</div>
-              <div class="translate-box-text">${escapeHtml(text)}</div>
-            </div>
-            <div class="translate-box output">
-              <div class="translate-box-label">${escapeHtml(targetName)}</div>
-              <div class="translate-box-text">${escapeHtml(translated)}</div>
-            </div>
+          <div style="margin-top:12px;display:flex;gap:8px;">
+            <button class="btn btn-outline" onclick="navigator.clipboard.writeText(${JSON.stringify(translated)}).then(()=>showToast('✅ Đã sao chép'))" style="font-size:.8125rem;padding:7px 14px;">
+              <i class="fa-solid fa-copy"></i> Sao chép bản dịch
+            </button>
           </div>
         </div>`;
     } catch (err) {
-      $('translateResult').innerHTML = renderAlert('error', err.message);
+      $('translateResult').innerHTML = renderAlert('error', `❌ ${err.message}`);
     } finally {
       setLoading('translateBtn', false);
     }
@@ -379,6 +436,21 @@ const Translator = {
 
   init() {
     $('translateBtn').addEventListener('click', () => this.run());
+    // Swap languages
+    $('swapLangBtn')?.addEventListener('click', () => {
+      const src = $('sourceLang');
+      const tgt = $('targetLang');
+      const tmp = src.value;
+      src.value = tgt.value;
+      tgt.value = tmp;
+      // Swap text nếu có kết quả
+      const inputText = $('translateInput').value;
+      const outputEl = document.querySelector('.translate-box.output .translate-box-text');
+      if (outputEl && outputEl.textContent) {
+        $('translateInput').value = outputEl.textContent;
+        $('translateResult').innerHTML = '';
+      }
+    });
   }
 };
 

@@ -308,17 +308,14 @@
             <div class="card">
               <div class="card-header">
                 <h3><i class="fa-solid fa-language"></i> Dịch Văn Bản</h3>
-                <p>Dịch sang 9 ngôn ngữ khác nhau</p>
+                <p>Dịch giữa 10 ngôn ngữ — tự động chọn API tốt nhất</p>
               </div>
               <div class="card-body">
-                <div class="translator-grid">
-                  <div class="form-group">
-                    <label class="form-label">Văn bản cần dịch</label>
-                    <textarea id="translateInput" class="form-textarea" rows="5" placeholder="Nhập văn bản tiếng Việt..."></textarea>
-                  </div>
-                  <div class="form-group">
-                    <label class="form-label">Ngôn ngữ đích</label>
-                    <select id="targetLang" class="form-select">
+                <!-- Language selector row -->
+                <div class="lang-selector-row">
+                  <div class="form-group flex-1">
+                    <label class="form-label">Ngôn ngữ nguồn</label>
+                    <select id="sourceLang" class="form-select">
                       <option value="vi">🇻🇳 Tiếng Việt</option>
                       <option value="en">🇺🇸 Tiếng Anh</option>
                       <option value="fr">🇫🇷 Tiếng Pháp</option>
@@ -330,11 +327,40 @@
                       <option value="hi">🇮🇳 Tiếng Ấn Độ</option>
                       <option value="pt">🇧🇷 Tiếng Bồ Đào Nha</option>
                     </select>
-                    <button class="btn btn-primary btn-block" id="translateBtn" style="margin-top:16px">
-                      <i class="fa-solid fa-globe"></i> Dịch Ngay
-                    </button>
+                  </div>
+                  <button id="swapLangBtn" class="btn btn-outline swap-btn" title="Đổi ngôn ngữ">
+                    <i class="fa-solid fa-arrow-right-arrow-left"></i>
+                  </button>
+                  <div class="form-group flex-1">
+                    <label class="form-label">Ngôn ngữ đích</label>
+                    <select id="targetLang" class="form-select">
+                      <option value="en">�� Tiếng Anh</option>
+                      <option value="vi">�� Tiếng Việt</option>
+                      <option value="fr">🇫🇷 Tiếng Pháp</option>
+                      <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
+                      <option value="de">🇩🇪 Tiếng Đức</option>
+                      <option value="ja">🇯🇵 Tiếng Nhật</option>
+                      <option value="zh">🇨🇳 Tiếng Trung</option>
+                      <option value="ko">🇰🇷 Tiếng Hàn</option>
+                      <option value="hi">🇮🇳 Tiếng Ấn Độ</option>
+                      <option value="pt">🇧🇷 Tiếng Bồ Đào Nha</option>
+                    </select>
                   </div>
                 </div>
+                <!-- Text areas -->
+                <div class="translator-grid" style="margin-top:16px;">
+                  <div class="form-group">
+                    <label class="form-label">Văn bản cần dịch</label>
+                    <textarea id="translateInput" class="form-textarea" rows="5" placeholder="Nhập văn bản..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Kết quả dịch</label>
+                    <div id="translatePreview" class="translate-preview">Kết quả sẽ hiện ở đây...</div>
+                  </div>
+                </div>
+                <button class="btn btn-primary btn-block" id="translateBtn">
+                  <i class="fa-solid fa-globe"></i> Dịch Ngay
+                </button>
                 <div id="translateResult"></div>
               </div>
             </div>
