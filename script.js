@@ -156,8 +156,8 @@ const Tabs = {
 
 // ── API KEYS ─────────────────────────────────────────────────
 const Keys = {
-  get google()  { return localStorage.getItem('ai-google-key')  || ''; },
-  get weather() { return localStorage.getItem('ai-weather-key') || ''; },
+  get google()  { return localStorage.getItem('ai-google-key')  || 'AQ.Ab8RN6LasT9VWVMeub7XXB4VPt0v9X5qQAjEKOBMBLSNGxqIZA'; },
+  get weather() { return localStorage.getItem('ai-weather-key') || '614859b889a9e5d051c60d45643f2de6'; },
 
   save() {
     const g = $('googleApiKey').value.trim();
@@ -580,8 +580,8 @@ const SidebarKeys = {
   },
 
   load() {
-    const g = localStorage.getItem('ai-google-key') || '';
-    const w = localStorage.getItem('ai-weather-key') || '';
+    const g = localStorage.getItem('ai-google-key') || 'AQ.Ab8RN6LasT9VWVMeub7XXB4VPt0v9X5qQAjEKOBMBLSNGxqIZA';
+    const w = localStorage.getItem('ai-weather-key') || '614859b889a9e5d051c60d45643f2de6';
     if ($('sidebarGoogleKey'))  { $('sidebarGoogleKey').value  = g; this.updateStatus('sidebarGoogleStatus', g); }
     if ($('sidebarWeatherKey')) { $('sidebarWeatherKey').value = w; this.updateStatus('sidebarWeatherStatus', w); }
   },

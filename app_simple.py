@@ -17,7 +17,8 @@ st.markdown("---")
 # Sidebar
 with st.sidebar:
     st.header("⚙️ Cấu Hình")
-    api_key = st.text_input("Google API Key", type="password", help="https://aistudio.google.com/apikey")
+    default_key = os.getenv("GOOGLE_API_KEY", "AQ.Ab8RN6LasT9VWVMeub7XXB4VPt0v9X5qQAjEKOBMBLSNGxqIZA")
+    api_key = st.text_input("Google API Key", value=default_key, type="password", help="https://aistudio.google.com/apikey")
     
     if api_key:
         st.success("✅ API Key nhập rồi!")

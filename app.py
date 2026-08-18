@@ -19,8 +19,16 @@ st.markdown("---")
 with st.sidebar:
     st.header("⚙️ Cấu Hình API")
     
+    import os
+    from dotenv import load_dotenv
+    load_dotenv()
+    
+    default_google_key = os.getenv("GOOGLE_API_KEY", "AQ.Ab8RN6LasT9VWVMeub7XXB4VPt0v9X5qQAjEKOBMBLSNGxqIZA")
+    default_weather_key = os.getenv("OPENWEATHER_API_KEY", "614859b889a9e5d051c60d45643f2de6")
+    
     google_api_key = st.text_input(
         "🔑 Google API Key",
+        value=default_google_key,
         type="password",
         placeholder="Nhập Google API Key"
     )
@@ -32,6 +40,7 @@ with st.sidebar:
     
     openweather_key = st.text_input(
         "🌤️ OpenWeather API Key",
+        value=default_weather_key,
         type="password",
         placeholder="Nhập OpenWeather API Key"
     )

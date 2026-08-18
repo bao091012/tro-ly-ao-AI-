@@ -10,6 +10,26 @@ import requests
 class AITools:
     """Bộ công cụ cho AI sử dụng"""
 
+    def __init__(self, google_api_key: str = None, openweather_key: str = None):
+        self.google_api_key = google_api_key or os.getenv("GOOGLE_API_KEY", "AQ.Ab8RN6LasT9VWVMeub7XXB4VPt0v9X5qQAjEKOBMBLSNGxqIZA")
+        self.openweather_key = openweather_key or os.getenv("OPENWEATHER_API_KEY", "614859b889a9e5d051c60d45643f2de6")
+
+    # Các phương thức instance làm alias để tương thích với app.py
+    def weather(self, city: str) -> dict:
+        return self.get_weather(city, self.openweather_key)
+
+    def translate(self, text: str, target_language: str) -> dict:
+        return self.translate_text(text, target_language)
+
+    def get_time(self) -> dict:
+        return self.get_current_time()
+
+    def search(self, query: str) -> dict:
+        return self.search_information(query)
+
+    def format_json(self, expression: str) -> dict:
+        return self.format_as_json(expression)
+
     @staticmethod
     def calculator(expression: str) -> dict:
         """Máy tính: Tính toán biểu thức toán học"""
@@ -33,7 +53,7 @@ class AITools:
         try:
             # Sử dụng OpenWeatherMap API
             if not api_key:
-                api_key = os.getenv("OPENWEATHER_API_KEY", "")
+                api_key = os.getenv("OPENWEATHER_API_KEY", "614859b889a9e5d051c60d45643f2de6")
             
             if not api_key:
                 return {"error": "Chưa nhập OpenWeather API Key"}
