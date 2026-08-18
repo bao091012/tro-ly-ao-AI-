@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="vi" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Trợ Lý Ảo AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       THEME TOGGLE - TOP RIGHT
+  ══════════════════════════════════════ -->
+  <button id="themeToggle" class="theme-toggle" aria-label="Chuyển chủ đề">
+    <span class="theme-icon theme-icon--light"><i class="fa-solid fa-sun"></i></span>
+    <span class="theme-icon theme-icon--dark"><i class="fa-solid fa-moon"></i></span>
+    <span class="theme-label" id="themeLabel">Tối</span>
+  </button>
+
+  <!-- ══════════════════════════════════════
+       SIDEBAR
+  ══════════════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-logo">
+        <i class="fa-solid fa-robot"></i>
+      </div>
+      <div class="brand-text">
+        <span class="brand-name">Trợ Lý Ảo AI</span>
+        <span class="brand-tagline">Premium Assistant</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <p class="nav-label">Điều hướng</p>
+      <a href="#" class="nav-item active" data-page="home">
+        <i class="fa-solid fa-house"></i>
+        <span>Trang Chủ</span>
+      </a>
+      <a href="#" class="nav-item" data-page="tools">
+        <i class="fa-solid fa-screwdriver-wrench"></i>
+        <span>Công Cụ</span>
+      </a>
+      <a href="#" class="nav-item" data-page="settings">
+        <i class="fa-solid fa-gear"></i>
+        <span>Cài Đặt</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-tools">
+      <p class="nav-label">Công cụ</p>
+      <a href="#" class="nav-item tool-link" data-tool="calculator">
+        <i class="fa-solid fa-calculator"></i>
+        <span>Máy Tính</span>
+      </a>
+      <a href="#" class="nav-item tool-link" data-tool="weather">
+        <i class="fa-solid fa-cloud-sun"></i>
+        <span>Thời Tiết</span>
+      </a>
+      <a href="#" class="nav-item tool-link" data-tool="translator">
+        <i class="fa-solid fa-language"></i>
+        <span>Dịch Văn</span>
+      </a>
+      <a href="#" class="nav-item tool-link" data-tool="time">
+        <i class="fa-solid fa-clock"></i>
+        <span>Thời Gian</span>
+      </a>
+      <a href="#" class="nav-item tool-link" data-tool="search">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>Tìm Kiếm</span>
+      </a>
+      <a href="#" class="nav-item tool-link" data-tool="json">
+        <i class="fa-solid fa-code"></i>
+        <span>JSON</span>
+      </a>
+    </div>
+
+    <!-- API Keys trực tiếp trong sidebar -->
+    <div class="sidebar-apikeys">
+      <p class="nav-label">API Keys</p>
+
+      <div class="sidebar-key-group">
+        <label class="sidebar-key-label">
+          <i class="fa-solid fa-key"></i> Google API Key
+        </label>
+        <div class="sidebar-key-input-wrap">
+          <input
+            type="password"
+            id="sidebarGoogleKey"
+            class="sidebar-key-input"
+            placeholder="Dán key vào đây..."
+          />
+          <button class="sidebar-key-toggle" data-target="sidebarGoogleKey" title="Hiện/ẩn key">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+        <div id="sidebarGoogleStatus" class="sidebar-key-status"></div>
+      </div>
+
+      <div class="sidebar-key-group">
+        <label class="sidebar-key-label">
+          <i class="fa-solid fa-cloud-sun"></i> OpenWeather Key
+        </label>
+        <div class="sidebar-key-input-wrap">
+          <input
+            type="password"
+            id="sidebarWeatherKey"
+            class="sidebar-key-input"
+            placeholder="Dán key vào đây..."
+          />
+          <button class="sidebar-key-toggle" data-target="sidebarWeatherKey" title="Hiện/ẩn key">
+            <i class="fa-solid fa-eye"></i>
+          </button>
+        </div>
+        <div id="sidebarWeatherStatus" class="sidebar-key-status"></div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="sidebar-version">
+        <span class="badge badge-primary">v1.0</span>
+        <span class="text-muted">2026 Edition</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ══════════════════════════════════════
+       MAIN CONTENT
+  ══════════════════════════════════════ -->
+  <div class="layout-wrapper">
+
+    <!-- TOP NAV -->
+    <header class="topnav">
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+      <nav class="breadcrumb" aria-label="breadcrumb">
+        <span class="breadcrumb-item">Trang Chủ</span>
+        <i class="fa-solid fa-chevron-right breadcrumb-sep"></i>
+        <span class="breadcrumb-item active" id="breadcrumbCurrent">Tổng Quan</span>
+      </nav>
+      <div class="topnav-right">
+        <button class="icon-btn" aria-label="Thông báo">
+          <i class="fa-solid fa-bell"></i>
+          <span class="dot-badge"></span>
+        </button>
+        <div class="avatar" title="Người dùng">AI</div>
+      </div>
+    </header>
+
+    <!-- PAGES -->
+    <main class="main" id="mainContent">
+
+      <!-- ── PAGE: HOME ── -->
+      <section class="page active" id="page-home">
+        <div class="page-header">
+          <h1 class="page-title">Chào mừng 👋</h1>
+          <p class="page-subtitle">Trợ Lý Ảo AI — công cụ thông minh, giao diện tối giản, trải nghiệm cao cấp.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card" data-tool-open="calculator">
+            <div class="stat-icon" style="background:rgba(37,99,235,.1);color:#2563eb">
+              <i class="fa-solid fa-calculator"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">Máy Tính</p>
+              <p class="stat-value">Tính toán</p>
+            </div>
+            <i class="fa-solid fa-arrow-right stat-arrow"></i>
+          </div>
+          <div class="stat-card" data-tool-open="weather">
+            <div class="stat-icon" style="background:rgba(6,182,212,.1);color:#06b6d4">
+              <i class="fa-solid fa-cloud-sun"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">Thời Tiết</p>
+              <p class="stat-value">Dự báo</p>
+            </div>
+            <i class="fa-solid fa-arrow-right stat-arrow"></i>
+          </div>
+          <div class="stat-card" data-tool-open="translator">
+            <div class="stat-icon" style="background:rgba(16,185,129,.1);color:#10b981">
+              <i class="fa-solid fa-language"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">Dịch Văn</p>
+              <p class="stat-value">9 ngôn ngữ</p>
+            </div>
+            <i class="fa-solid fa-arrow-right stat-arrow"></i>
+          </div>
+          <div class="stat-card" data-tool-open="time">
+            <div class="stat-icon" style="background:rgba(245,158,11,.1);color:#f59e0b">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">Thời Gian</p>
+              <p class="stat-value">Hiện tại</p>
+            </div>
+            <i class="fa-solid fa-arrow-right stat-arrow"></i>
+          </div>
+          <div class="stat-card" data-tool-open="search">
+            <div class="stat-icon" style="background:rgba(139,92,246,.1);color:#8b5cf6">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">Tìm Kiếm</p>
+              <p class="stat-value">Wikipedia</p>
+            </div>
+            <i class="fa-solid fa-arrow-right stat-arrow"></i>
+          </div>
+          <div class="stat-card" data-tool-open="json">
+            <div class="stat-icon" style="background:rgba(239,68,68,.1);color:#ef4444">
+              <i class="fa-solid fa-code"></i>
+            </div>
+            <div class="stat-body">
+              <p class="stat-label">JSON</p>
+              <p class="stat-value">Định dạng</p>
+            </div>
+            <i class="fa-solid fa-arrow-right stat-arrow"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── PAGE: TOOLS ── -->
+      <section class="page" id="page-tools">
+        <div class="page-header">
+          <h1 class="page-title">Công Cụ</h1>
+          <p class="page-subtitle">Chọn một công cụ bên dưới để bắt đầu.</p>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs-bar">
+          <button class="tab-btn active" data-tab="calculator"><i class="fa-solid fa-calculator"></i> Máy Tính</button>
+          <button class="tab-btn" data-tab="weather"><i class="fa-solid fa-cloud-sun"></i> Thời Tiết</button>
+          <button class="tab-btn" data-tab="translator"><i class="fa-solid fa-language"></i> Dịch Văn</button>
+          <button class="tab-btn" data-tab="time"><i class="fa-solid fa-clock"></i> Thời Gian</button>
+          <button class="tab-btn" data-tab="search"><i class="fa-solid fa-magnifying-glass"></i> Tìm Kiếm</button>
+          <button class="tab-btn" data-tab="json"><i class="fa-solid fa-code"></i> JSON</button>
+        </div>
+
+        <div class="tabs-content">
+
+          <!-- CALCULATOR -->
+          <div class="tab-panel active" id="tab-calculator">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-calculator"></i> Máy Tính Toán Học</h3>
+                <p>Tính toán biểu thức toán học phức tạp</p>
+              </div>
+              <div class="card-body">
+                <div class="input-row">
+                  <div class="form-group flex-1">
+                    <label class="form-label">Biểu thức</label>
+                    <input type="text" id="calcInput" class="form-input" placeholder="VD: 2 + 2, sqrt(16), (5+3)*2" />
+                  </div>
+                  <button class="btn btn-primary" id="calcBtn" style="margin-top:24px">
+                    <i class="fa-solid fa-equals"></i> Tính
+                  </button>
+                </div>
+                <div id="calcResult"></div>
+                <div class="chip-group">
+                  <span class="chip example-calc" data-v="2 + 2">2 + 2</span>
+                  <span class="chip example-calc" data-v="sqrt(16)">sqrt(16)</span>
+                  <span class="chip example-calc" data-v="10 * 5">10 × 5</span>
+                  <span class="chip example-calc" data-v="(5+3)/2">(5+3)/2</span>
+                  <span class="chip example-calc" data-v="100 - 37">100 − 37</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- WEATHER -->
+          <div class="tab-panel" id="tab-weather">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-cloud-sun"></i> Dự Báo Thời Tiết</h3>
+                <p>Thời tiết hiện tại tại bất kỳ thành phố nào</p>
+              </div>
+              <div class="card-body">
+                <div class="input-row">
+                  <div class="form-group flex-1">
+                    <label class="form-label">Thành phố</label>
+                    <input type="text" id="weatherInput" class="form-input" placeholder="VD: Hanoi, Ho Chi Minh City" />
+                  </div>
+                  <button class="btn btn-primary" id="weatherBtn" style="margin-top:24px">
+                    <i class="fa-solid fa-search"></i> Tìm
+                  </button>
+                </div>
+                <div id="weatherResult"></div>
+                <div class="chip-group">
+                  <span class="chip city-chip" data-c="Hanoi">Hà Nội</span>
+                  <span class="chip city-chip" data-c="Ho Chi Minh City">TP.HCM</span>
+                  <span class="chip city-chip" data-c="Da Nang">Đà Nẵng</span>
+                  <span class="chip city-chip" data-c="Can Tho">Cần Thơ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TRANSLATOR -->
+          <div class="tab-panel" id="tab-translator">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-language"></i> Dịch Văn Bản</h3>
+                <p>Dịch sang 9 ngôn ngữ khác nhau</p>
+              </div>
+              <div class="card-body">
+                <div class="translator-grid">
+                  <div class="form-group">
+                    <label class="form-label">Văn bản cần dịch</label>
+                    <textarea id="translateInput" class="form-textarea" rows="5" placeholder="Nhập văn bản tiếng Việt..."></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Ngôn ngữ đích</label>
+                    <select id="targetLang" class="form-select">
+                      <option value="vi">🇻🇳 Tiếng Việt</option>
+                      <option value="en">🇺🇸 Tiếng Anh</option>
+                      <option value="fr">🇫🇷 Tiếng Pháp</option>
+                      <option value="es">🇪🇸 Tiếng Tây Ban Nha</option>
+                      <option value="de">🇩🇪 Tiếng Đức</option>
+                      <option value="ja">🇯🇵 Tiếng Nhật</option>
+                      <option value="zh">🇨🇳 Tiếng Trung</option>
+                      <option value="ko">🇰🇷 Tiếng Hàn</option>
+                      <option value="hi">🇮🇳 Tiếng Ấn Độ</option>
+                      <option value="pt">🇧🇷 Tiếng Bồ Đào Nha</option>
+                    </select>
+                    <button class="btn btn-primary btn-block" id="translateBtn" style="margin-top:16px">
+                      <i class="fa-solid fa-globe"></i> Dịch Ngay
+                    </button>
+                  </div>
+                </div>
+                <div id="translateResult"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- TIME -->
+          <div class="tab-panel" id="tab-time">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-clock"></i> Thời Gian Hiện Tại</h3>
+                <p>Xem giờ, ngày và thứ hiện tại</p>
+              </div>
+              <div class="card-body center-content">
+                <button class="btn btn-primary btn-lg" id="timeBtn">
+                  <i class="fa-solid fa-clock"></i> Lấy Thời Gian
+                </button>
+                <div id="timeResult" style="margin-top:24px"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SEARCH -->
+          <div class="tab-panel" id="tab-search">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-magnifying-glass"></i> Tìm Kiếm Wikipedia</h3>
+                <p>Tìm kiếm thông tin chính xác từ Wikipedia tiếng Việt</p>
+              </div>
+              <div class="card-body">
+                <div class="input-row">
+                  <div class="form-group flex-1">
+                    <label class="form-label">Từ khoá</label>
+                    <input type="text" id="searchInput" class="form-input" placeholder="VD: Albert Einstein, Python, Hà Nội" />
+                  </div>
+                  <button class="btn btn-primary" id="searchBtn" style="margin-top:24px">
+                    <i class="fa-solid fa-search"></i> Tìm
+                  </button>
+                </div>
+                <div id="searchResult"></div>
+                <div class="chip-group">
+                  <span class="chip search-chip" data-q="Trí tuệ nhân tạo">Trí tuệ nhân tạo</span>
+                  <span class="chip search-chip" data-q="Python">Python</span>
+                  <span class="chip search-chip" data-q="Hà Nội">Hà Nội</span>
+                  <span class="chip search-chip" data-q="Albert Einstein">Einstein</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- JSON -->
+          <div class="tab-panel" id="tab-json">
+            <div class="card">
+              <div class="card-header">
+                <h3><i class="fa-solid fa-code"></i> Định Dạng JSON</h3>
+                <p>Kiểm tra và làm đẹp dữ liệu JSON</p>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label class="form-label">Nhập JSON</label>
+                  <textarea id="jsonInput" class="form-textarea form-code" rows="7" placeholder='{"name":"John","age":30}'></textarea>
+                </div>
+                <div class="btn-row">
+                  <button class="btn btn-primary" id="jsonFormatBtn">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Định Dạng
+                  </button>
+                  <button class="btn btn-outline" id="jsonClearBtn">
+                    <i class="fa-solid fa-trash"></i> Xóa
+                  </button>
+                </div>
+                <div id="jsonResult"></div>
+                <div class="chip-group">
+                  <span class="chip json-chip" data-j='{"name":"John","age":30}'>Person</span>
+                  <span class="chip json-chip" data-j='{"items":["A","B","C"],"count":3}'>Array</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /tabs-content -->
+      </section>
+
+      <!-- ── PAGE: SETTINGS ── -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <h1 class="page-title">Cài Đặt</h1>
+          <p class="page-subtitle">Quản lý API Keys và tuỳ chỉnh ứng dụng.</p>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3><i class="fa-solid fa-key"></i> API Keys</h3>
+            <p>Nhập keys để kích hoạt tính năng</p>
+          </div>
+          <div class="card-body">
+            <div class="form-group">
+              <label class="form-label">🔑 Google API Key</label>
+              <input type="password" id="googleApiKey" class="form-input" placeholder="Dán Google API Key vào đây..." />
+              <p class="form-hint">Lấy tại: <a href="https://aistudio.google.com/apikey" target="_blank">aistudio.google.com</a></p>
+              <div id="googleStatus" class="status-msg"></div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">🌤️ OpenWeather API Key</label>
+              <input type="password" id="weatherApiKey" class="form-input" placeholder="Dán OpenWeather API Key vào đây..." />
+              <p class="form-hint">Lấy tại: <a href="https://openweathermap.org/api" target="_blank">openweathermap.org</a></p>
+              <div id="weatherKeyStatus" class="status-msg"></div>
+            </div>
+
+            <button class="btn btn-primary" id="saveKeysBtn">
+              <i class="fa-solid fa-floppy-disk"></i> Lưu Cài Đặt
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast" role="alert" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
